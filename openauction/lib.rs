@@ -93,7 +93,15 @@ mod openauction {
                 self.pending_returns.insert(caller, &0);
 
                 // let transfer = self.env().transfer(caller, amount);
-                // TODO:: WIP
+                let result = match self.env().transfer(caller, amount) {
+                    Ok(()) => true,
+                    Err(_) => false
+                };
+                if !result {
+                    // no need to call throw here, just reset the amount owing
+                    self.pending_returns.insert(caller, &amount);
+                    false;
+                }
             }
             true
         }
