@@ -88,17 +88,17 @@ mod ballot {
             voters.weight = 1;
         }
 
+
         // Delegeate your vote to the voter `to`
 
-        // #[ink(message)] 
-        #[inline]
-        pub fn delegate(&mut self, to: &mut AccountId) {
+        #[ink(message)] 
+        pub fn delegate(&mut self, to: AccountId) {
             let caller = self.env().caller();
             let mut voters = self.voters.get(caller).unwrap_or_default();
-            let mut voters_to = self.voters.get(*to).unwrap_or_default();
+            let mut voters_to = self.voters.get(to).unwrap_or_default();
             assert!(!voters.voted, "You already voted.");
 
-            assert!(*to != caller, "Self-delegation is disallowed");
+            assert!(to != caller, "Self-delegation is disallowed");
 
             // Forward the delegation as long as 
             // `to` also delegated
@@ -109,16 +109,16 @@ mod ballot {
             // cause a contract to get "stuck" completely
 
             while voters_to.delegate != [0; 32].into() {
-                *to = voters_to.delegate;
+                voters_to.delegate = to;
 
                 // We found a loop in the delegation, not allowed.
-                assert!(*to != caller, "Found loop in delegation");
+                assert!(to != caller, "Found loop in delegation");
             }
 
             // Since `sender` is a reference, this
             // modifies `voters.voted`
             voters.voted = true;
-            voters.delegate = *to;
+            voters.delegate = to;
 
             if voters_to.voted {
                 // If the delegate already voted,
