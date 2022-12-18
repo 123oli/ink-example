@@ -1,1 +1,1 @@
-# ink--by-example
+# ink-example
