@@ -24,6 +24,11 @@ crate-type = [
 	"cdylib",
 ]
 
+# "This typically goes back to a known bug in the Rust compiler:
+# https://github.com/rust-lang/rust/issues/78744"
+[profile.release.package.compiler_builtins]
+overflow-checks = false
+
 [features]
 default = ["std"]
 std = [
@@ -35,6 +40,6 @@ std = [
     "scale-info/std",
     "ink_prelude/std",
 
-    "openbrush/std"
+    "openbrush/std",
 ]
 ink-as-dependency = []
